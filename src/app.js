@@ -1,50 +1,78 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Modal } from 'bootstrap';
-import Api from './api'
+import {
+    Modal
+} from 'bootstrap';
+import Api from './api';
 
-console.log('im here')
+console.log('im here');
 
 function init() {
 
-    var myModal = new Modal(document.getElementById('exampleModal'))
+    var myModal = new Modal(document.getElementById('exampleModal'));
 
-    renderTodos()
+    renderTodos();
 
-    document.getElementById('onSaveTodo').addEventListener('click', () => {
-        const input = document.getElementById('toDoName')
-        Api.addTodo({
-            name: input.value,
-            id: new Date().getTime()
-        });
-        myModal.hide()
-        input.value = ''
-        renderTodos()
-    })
+    const mainForm = document.forms.main;
+    const mainFormInput = mainForm.input;
+    mainForm.addEventListener('submit', (e) => {
+        if (!mainFormInput.value) {
+            check();
+            e.preventDefault();
+        } else {
+            const input = mainFormInput.value;
+
+            Api.addTodo({
+                name: input,
+                id: new Date().getTime()
+            });
+            myModal.hide();
+            input.value = '';
+            renderTodos();
+        }
+    });
 
     document.getElementById('container').addEventListener('click', (e) => {
-        const el = e.target
+        const el = e.target;
         if (el.classList.contains('remove-todo')) {
-            const liEl = el.closest('li')
-            // const allLi = Array.from(document.querySelectorAll('#container li'))
-            // const numberToRemove = allLi.indexOf(liEl)
-            // Api.removeTodo(numberToRemove);
 
-            Api.removeById(liEl.id)
-            renderTodos()
+            const liEl = el.closest('li');
+
+            Api.removeById(liEl.id);
+            renderTodos();
         }
-    }, {capture: true})
 
+    }, {
+        capture: true
+    });
+
+}
+
+function check() {
+
+    var forms = document.querySelectorAll('.needs-validation');
+
+    Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
 }
 
 function renderTodos() {
 
-    document.getElementById('container').innerHTML = ''
+    document.getElementById('container').innerHTML = '';
 
-    const data = Api.getData()
+    const data = Api.getData();
 
     data.forEach((item) => {
-        const li = document.createElement('li')
-        li.id = item.id
+        const li = document.createElement('li');
+        li.id = item.id;
         li.innerHTML =
             `<div class="input-group mb-3">
                 <div class="input-group-text">
@@ -55,10 +83,10 @@ function renderTodos() {
                     <button type="button" class="btn btn-primary remove-todo">Remove</button>
                 </div>
             </div>`;
-        document.getElementById('container').appendChild(li)
+        document.getElementById('container').appendChild(li);
 
-    })
+    });
 
 }
 
-init()
+init();

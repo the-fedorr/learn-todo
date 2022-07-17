@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="../scss/custom.css" />
 </head>
+
 <body>
 
-    <ul id="container">
-    </ul>
+    <form name="todoMain">
+        <ul id="container">
+        </ul>
+    </form>
     <script type="module" src="app.js"></script>
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
+        Add ToDo!!!
     </button>
 
     <!-- Modal -->
@@ -25,15 +29,26 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control" placeholder="ToDo name" id="toDoName">
+                    <form name="main" class="row g-3 needs-validation" novalidate>
+                        <div class="col-md-6">
+                            <label for="validationCustom03" class="form-label">ToDo Name</label>
+                            <input name="input" value="" type="text" class="form-control" id="validationCustom03"
+                                required>
+                            <div class="invalid-feedback">
+                                Please provide a valid ToDo Name!!!
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" type="submit">Submit form</button>
+                        </div>
+                        <!-- <input type="text" class="form-control" placeholder="ToDo name" id="toDoName"> -->
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="onSaveTodo">Save changes</button>
-                </div>
+
+                </form>
             </div>
         </div>
     </div>
 
 </body>
+
 </html>
