@@ -11,12 +11,12 @@ function init() {
     var myModal = new Modal(document.getElementById('exampleModal'));
 
     renderTodos();
+    listenValidation();
 
     const mainForm = document.forms.main;
     const mainFormInput = mainForm.input;
     mainForm.addEventListener('submit', (e) => {
         if (!mainFormInput.value) {
-            check();
             e.preventDefault();
         } else {
             const input = mainFormInput.value;
@@ -47,7 +47,7 @@ function init() {
 
 }
 
-function check() {
+function listenValidation() {
 
     var forms = document.querySelectorAll('.needs-validation');
 
