@@ -15,19 +15,21 @@ function init() {
     Array.prototype.slice.call(forms)
       .forEach(function (form) {
         form.addEventListener('submit', function (event) {
+          const input = document.getElementById('toDoName')
+          
           if (!form.checkValidity()) {
             event.preventDefault()
             event.stopPropagation()
             console.log("invalid")
           } else {
             Api.addTodo({
-            name: input.value,
+              name: input.value,
               id: new Date().getTime()
-          })
-          myModal.hide()
-          input.value = ''
+            })
+            myModal.hide()
+            input.value = ''
             renderTodos()
-            console.log("invalid")
+            console.log("valid")
           }
           form.classList.add('was-validated')
         }, false)
