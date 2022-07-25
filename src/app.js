@@ -2,24 +2,26 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from 'bootstrap';
 import Api from './api'
 
-console.log('im here')
-
 function init() {
 
     var myModal = new Modal(document.getElementById('exampleModal'))
 
     renderTodos()
 
-    document.getElementById('onSaveTodo').addEventListener('click', () => {
-        const input = document.getElementById('toDoName')
-        Api.addTodo({
-            name: input.value,
-            id: new Date().getTime()
-        });
-        myModal.hide()
-        input.value = ''
-        renderTodos()
-    })
+    document.getElementById('addForm').addEventListener('submit',
+        (e) => {
+            const input = document.getElementById('toDoName')
+            console.log(myModal)
+            Api.addTodo({
+                name: input.value
+            }).then(() => {
+                myModal.hide()
+                input.value = ''
+                renderTodos()
+            })
+            e.preventDefault()
+        }
+    )
 
     document.getElementById('container').addEventListener('click', (e) => {
         const el = e.target
@@ -40,24 +42,25 @@ function renderTodos() {
 
     document.getElementById('container').innerHTML = ''
 
-    const data = Api.getData()
+    Api.getData().then((data) => {
+        data.forEach((item) => {
+            const li = document.createElement('li')
+            li.id = item.id
+            li.innerHTML =
+                `<div class="input-group mb-3">
+                    <div class="input-group-text">
+                        <input class="form-check-input mt-0" type="checkbox" value="">
+                    </div>
+                    <input type="text" value="${item.name}" class="form-control">
+                    <div class="input-group-text">
+                        <button type="button" class="btn btn-primary remove-todo">Remove</button>
+                    </div>
+                </div>`;
+            document.getElementById('container').appendChild(li)
 
-    data.forEach((item) => {
-        const li = document.createElement('li')
-        li.id = item.id
-        li.innerHTML =
-            `<div class="input-group mb-3">
-                <div class="input-group-text">
-                    <input class="form-check-input mt-0" type="checkbox" value="">
-                </div>
-                <input type="text" value="${item.name}" class="form-control">
-                <div class="input-group-text">
-                    <button type="button" class="btn btn-primary remove-todo">Remove</button>
-                </div>
-            </div>`;
-        document.getElementById('container').appendChild(li)
+        })
+    }, (e) => console.log(e))
 
-    })
 
 }
 

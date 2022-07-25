@@ -1,21 +1,32 @@
 const Api = {
 
-    getData() {
-        try {
-            return JSON.parse(localStorage.getItem('items')) || []
-        } catch (e) {
-            return []
-        }
+    async getData() {
+        const response = await fetch('http://146.190.226.226:8000/api/core/tasks')
+        const data = await response.json()
+        return data.content || []
     },
 
     setData(todoItems) {
         localStorage.setItem('items', JSON.stringify(todoItems))
     },
 
-    addTodo(item) {
-        const data = this.getData();
-        data.push(item)
-        this.setData(data);
+    async addTodo(item) {
+        console.log(item)
+        try {
+            await fetch('http://146.190.226.226:8000/api/core/tasks', {
+                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: item.name,
+                    content: 'content'
+                })
+            })
+        } catch (e) {
+            console.log(e)
+        }
     },
 
     removeTodo(index) {
