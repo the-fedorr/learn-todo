@@ -1,7 +1,9 @@
 const Api = {
-  getData() {
+   async getData() {
     try {
-      return JSON.parse(localStorage.getItem('items') || [])
+      const response = await fetch('http://146.190.226.226:8000/api/core/tasks')
+      const resData = await response.json()
+      return resData.content || []
     } catch (e) {
       return []
     }
@@ -12,28 +14,43 @@ const Api = {
   },
 
   addTodo(item) {
-    const data = this.getData()
-    data.push(item)
-    console.log(data)
-    this.setData(data)
-  },
-
-  removeTodo(index) {
-    const data = this.getData()
-    console.log(data)
-    data.splice(index, 1)
-    console.log(data)
-    this.setData(data)
+    return fetch('http://146.190.226.226:8000/api/core/tasks', {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: item.name,
+      content:'Drew content'})
+    }
+    )
   },
 
   removeById(id) {
-    const data = this.getData()
-    console.log(data)
-    const newData = data.filter((item) => {
-      return item.id.toString() !== id.toString()
-    })
-    console.log(newData)
-    this.setData(newData)
+    return fetch(`http://146.190.226.226:8000/api/core/tasks/${id}`, {
+      method: 'delete',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: 'item.name',
+      content:'Drew content'})
+    }
+    )
+  },
+
+  updateById(id, item) {
+    console.log(id + item);
+    return fetch(`http://146.190.226.226:8000/api/core/tasks/${id}`, {
+      method: 'post',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: item,
+      content:'Drew content'})
+    }
+    )
   }
 }
 
