@@ -1,11 +1,12 @@
 const Api = {
-   async getData() {
+
+   async getData(pageNumber) {
     try {
-      const response = await fetch('http://146.190.226.226:8000/api/core/tasks')
+      const response = await fetch(`http://146.190.226.226:8000/api/core/tasks?size=1&page=${pageNumber}`)
       const resData = await response.json()
-      return resData.content || []
+      return resData
     } catch (e) {
-      return []
+      return {}
     }
   },
 
@@ -31,16 +32,12 @@ const Api = {
       method: 'delete',
       headers: {
         'Content-type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: 'item.name',
-      content:'Drew content'})
+      }
     }
     )
   },
 
   updateById(id, item) {
-    console.log(id + item);
     return fetch(`http://146.190.226.226:8000/api/core/tasks/${id}`, {
       method: 'post',
       headers: {
@@ -48,7 +45,7 @@ const Api = {
       },
       body: JSON.stringify({
         name: item,
-      content:'Drew content'})
+        content:'Drew content'})
     }
     )
   }

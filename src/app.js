@@ -5,6 +5,9 @@ import Api from './api'
 
 console.log('im here');
 
+let pageNumber = 0;
+let isLoading = false;
+
 function init() {
   var myModal = new Modal(document.getElementById('exampleModal'))
 
@@ -50,12 +53,10 @@ function init() {
     if (el.classList.contains('remove-todo')) {
       const liEl = el.closest('li')
       Api.removeById(liEl.id).then(() => {
-        renderTodos()
+        reload()
       })     
     }
   }, { capture: true });
-
-  //UPDATE TODO
 
   document.getElementById('container').addEventListener('click', (e) => {
     const el = e.target
@@ -63,34 +64,77 @@ function init() {
       const liEl = el.closest('li')
       const inputEl = document.getElementById(`input${liEl.id}`)
       Api.updateById(liEl.id, inputEl.value).then(() => {
-        renderTodos()
+        reload()
       })     
     }
   },{capture:true})
+
+
+  window.addEventListener('scroll', checkLoadMoreTodos)
+  window.addEventListener('resize', checkLoadMoreTodos)
+  window.addEventListener('load', checkLoadMoreTodos)
+
+  checkLoadMoreTodos()
+  checkLoadMoreTodos()
+
 }
 
 init()
 
-//RENDER
+function getPageNumber() {
+  return pageNumber++;
+}
+
+function checkLoadMoreTodos() {
+
+  const top = document.getElementById('infiniteTrigger').getBoundingClientRect().top
+
+  if (isLoading) {
+    console.log('Please wait')
+    return;
+  }
+
+  if (top > 0 && top <= window.innerHeight) {
+      renderTodos()
+  }
+
+
+}
+
+function reload() {
+  pageNumber = 0;
+  document.getElementById('container').innerHTML = ''
+  renderTodos();
+  document.getElementById('theEnd').style.display = 'none'
+  document.getElementById('infiniteTrigger').style.display = 'block'
+  checkLoadMoreTodos()
+}
 
 function renderTodos() {
-  document.getElementById('container').innerHTML = ''
-  Api.getData().then((data) => {
-    data.forEach((item) => {
-    const li = document.createElement('li')
-    li.id = item.id
-    li.innerHTML = `<div class="input-group mb-3">
-      <div class="input-group-text">
-        <input class="form-check-input mt-0" type="radio" value="">
-      </div>
-      <input type="text" value="${item.name}" class="form-control" id="input${item.id}">
-      <div class="input-group-text">
-        <button type="button" class="btn btn-primary update-todo">Update</button>
-        <button type="button" class="btn btn-primary remove-todo">Remove</button>
-      </div>
-    </div>`
-    document.getElementById('container').appendChild(li)
-  });
+  const pageNumber = getPageNumber()
+  isLoading = true
+  Api.getData(pageNumber).then(({content, last}) => {
+    if (last) {
+      document.getElementById('infiniteTrigger').style.display = 'none'
+      document.getElementById('theEnd').style.display = 'block'
+    }
+    content.forEach((item) => {
+      const li = document.createElement('li')
+      li.id = item.id
+      li.innerHTML = `<div class="input-group mb-3">
+        <div class="input-group-text">
+          <input class="form-check-input mt-0" type="radio" value="">
+        </div>
+        <input type="text" value="${item.name}" class="form-control" id="input${item.id}">
+        <div class="input-group-text">
+          <button type="button" class="btn btn-primary update-todo">Update</button>
+          <button type="button" class="btn btn-primary remove-todo">Remove</button>
+        </div>
+      </div>`
+      document.getElementById('container').appendChild(li)
+    });
+    isLoading = false
+    checkLoadMoreTodos()
   })
 
   
